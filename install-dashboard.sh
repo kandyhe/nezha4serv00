@@ -9,9 +9,17 @@ get_current_version() {
 
 get_latest_version() {
     # Get latest release version number
-    RELEASE_LATEST=$(curl -s https://api.github.com/repos/kandyhe/nezha-freebsd/releases/latest | jq -r '.tag_name')
-    if [[ -z "$RELEASE_LATEST" ]]; then
-        echo "error: Failed to get the latest release version, please check your network."
+    RESPONSE=$(curl -s -w "%{http_code}" https://api.github.com/repos/kandyhe/nezha-freebsd/releases/latest)
+    HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+    if [ "$HTTP_STATUS" -ne 200 ]; then
+        echo "error: Failed to get the latest release version, HTTP status: $HTTP_STATUS"
+        exit 1
+    fi
+    
+    RELEASE_LATEST=$(echo "$RESPONSE" | jq -r '.tag_name')
+    
+    if [[ -z "$RELEASE_LATEST" || "$RELEASE_LATEST" == "null" ]]; then
+        echo "error: Failed to parse the latest release version, please check your network or jq installation."
         exit 1
     fi
 }
