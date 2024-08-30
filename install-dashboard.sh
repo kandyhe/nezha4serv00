@@ -9,7 +9,7 @@ get_current_version() {
 
 get_latest_version() {
     # 获取最新发布版本号
-    RESPONSE=$(curl -s -w "%{http_code}" https://api.github.com/repos/kandyhe/nezha-freebsd/releases/latest)
+    RESPONSE=$(curl -s -w "%{http_code}" https://api.github.com/repos/wansyu/nezha-freebsd/releases/latest)
     HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
 
     # 检查 HTTP 状态码
