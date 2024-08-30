@@ -8,16 +8,21 @@ get_current_version() {
 }
 
 get_latest_version() {
-    # Get latest release version number
+    # 获取最新发布版本号
     RESPONSE=$(curl -s -w "%{http_code}" https://api.github.com/repos/kandyhe/nezha-freebsd/releases/latest)
     HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+
+    # 检查 HTTP 状态码
     if [ "$HTTP_STATUS" -ne 200 ]; then
         echo "error: Failed to get the latest release version, HTTP status: $HTTP_STATUS"
+        echo "请检查你的网络连接或尝试使用代理。"
         exit 1
     fi
-    
+
+    # 解析 JSON 响应中的 tag_name 字段
     RELEASE_LATEST=$(echo "$RESPONSE" | jq -r '.tag_name')
-    
+
+    # 检查是否成功获取版本号
     if [[ -z "$RELEASE_LATEST" || "$RELEASE_LATEST" == "null" ]]; then
         echo "error: Failed to parse the latest release version, please check your network or jq installation."
         exit 1
